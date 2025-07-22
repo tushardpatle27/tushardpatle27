@@ -18,7 +18,7 @@ spec:
       - name: go-hello-container
         image: hashicorp/http-echo:0.2.3
         args:
-        - "-text=Hello from Go App deployed by Argo CD!"
+        - "-text=Hello from Go App deployed by Argo CD version2!"
         ports:
         - containerPort: 8080
 ---
