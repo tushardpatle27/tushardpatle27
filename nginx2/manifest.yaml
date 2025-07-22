@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-app
+  labels:
+    app: flask-app
+spec:
+  selector:
+    app: flask-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-app
+  template:
+    metadata:
+      labels:
+        app: flask-app
+    spec:
+      containers:
+        - name: flask-container
+          image: tiangolo/uwsgi-nginx-flask:python3.8
+          ports:
+            - containerPort: 5000
+          env:
+            - name: MODULE_NAME
+              value: "main"
+            - name: VARIABLE_NAME
+              value: "app"
+          volumeMounts:
+            - name: app-code
+              mountPath: /app
+      volumes:
+        - name: app-code
+          configMap:
+            name: flask-code
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flask-code
+data:
+  main.py: |
+    from flask import Flask
+    app = Flask(__name__)
+
+    @app.route('/')
+    def hello():
+        return "Hello from Flask App deployed via manifest!"
