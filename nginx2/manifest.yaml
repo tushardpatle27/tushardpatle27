@@ -31,6 +31,6 @@ spec:
     app: go-hello-app
   ports:
   - protocol: TCP
-    port: 8888
-    targetPort: 8888
+    port: 5678
+    targetPort: 5678
   type: NodePort
